@@ -21,14 +21,14 @@ namespace MyAssecorLibrary
         auto iterConst = findIteratorOfCustomerWithID(id);
         auto iter = _Customers2.erase(iterConst, iterConst);
         if (iter != _Customers2.end())
-            return std::make_pair(GetResult::eOk, std::optional(std::reference_wrapper(*iter)));
+            return std::make_pair(GetResult::eOk, std::optional(std::ref(*iter) ));
         else
             return std::make_pair(GetResult::eIDNotFound, std::nullopt);
     }
 
     std::pair<GetResult, std::reference_wrapper<std::vector<CUSTOMER>>> CustomerRepositoryInMemory::getAllCustomers()
     {
-        return std::make_pair<GetResult, std::reference_wrapper<std::vector<CUSTOMER>>>(GetResult::eOk, _Customers2);
+        return std::make_pair<GetResult, std::reference_wrapper<std::vector<CUSTOMER>>>(GetResult::eOk, std::ref(_Customers2));
     }
 
     std::vector<CUSTOMER>::const_iterator CustomerRepositoryInMemory::findIteratorOfCustomerWithID(const IDTYPE& id) const

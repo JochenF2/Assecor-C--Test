@@ -116,8 +116,8 @@ BOOL CAssecorMFCApplicationDlg::OnInitDialog()
 	_CustomerRepositoryManager.addCustomer(CUSTOMER{ .id = 4, .first_name = "Sandra", .last_name = "Mauer", .zip_code = "10115", .city = "Berlin", .favorite_color = 30 });
 	_CustomerRepositoryManager.addCustomer(CUSTOMER{ .id = 5, .first_name = "Eva", .last_name = "Nimmer", .zip_code = "10115", .city = "Berlin", .favorite_color = 23 });
 
-	MyAssecorLibrary::Formatter aFormatter;
-	auto[getResult, customers] = aFormatter.getAllCustomers(_CustomerRepositoryManager);
+	MyAssecorLibrary::Formatter aFormatter(std::ref(_CustomerRepositoryManager));
+	auto[getResult, customers] = aFormatter.getAllCustomers(/*_CustomerRepositoryManager*/);
 	
 	if (getResult == MyAssecorLibrary::GetResult::eOk && customers.size()>0)
 	{
@@ -182,8 +182,8 @@ void CAssecorMFCApplicationDlg::OnBnClickedButtonBack()
 {
 	// TODO: Fügen Sie hier Ihren Handlercode für Benachrichtigungen des Steuerelements ein.
 
-	MyAssecorLibrary::Formatter aFormatter;
-	auto [getResult, customers] = aFormatter.getAllCustomers(_CustomerRepositoryManager);
+	MyAssecorLibrary::Formatter aFormatter(std::ref(_CustomerRepositoryManager));
+	auto [getResult, customers] = aFormatter.getAllCustomers(/*_CustomerRepositoryManager*/);
 	if(_CurrentCustomerCounter > 0)
 		--_CurrentCustomerCounter;
 
@@ -199,8 +199,8 @@ void CAssecorMFCApplicationDlg::OnBnClickedButtonForward()
 {
 	// TODO: Fügen Sie hier Ihren Handlercode für Benachrichtigungen des Steuerelements ein.
 
-	MyAssecorLibrary::Formatter aFormatter;
-	auto [getResult, customers] = aFormatter.getAllCustomers(_CustomerRepositoryManager);
+	MyAssecorLibrary::Formatter aFormatter(std::ref(_CustomerRepositoryManager));
+	auto [getResult, customers] = aFormatter.getAllCustomers(/*_CustomerRepositoryManager*/);
 	if (_CurrentCustomerCounter < customers.size()-1)
 		++_CurrentCustomerCounter;
 

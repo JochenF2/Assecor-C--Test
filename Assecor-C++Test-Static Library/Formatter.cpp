@@ -3,33 +3,36 @@
 
 namespace MyAssecorLibrary
 {
-	std::pair<GetResult, std::string> Formatter::getCustomerByID(const CustomerRepositoryManager& customerRepositoryManager, const IDTYPE& id) const
+	Formatter::Formatter(std::reference_wrapper<const CustomerRepositoryManager>&& customerRepositoryManager)
+		:_CustomerRepositoryManager(customerRepositoryManager)
+	{
+	}
+
+
+	std::pair<GetResult, std::string> Formatter::getCustomerByID(const IDTYPE& id) const
 	{
 		std::pair<GetResult, std::string> result;
 
-		auto [requestResult, optCustomer] = customerRepositoryManager.getCustomerByID(id);
+		auto [requestResult, optCustomer] = _CustomerRepositoryManager.get().getCustomerByID(id);
 		result.first = requestResult;
 
-		if (requestResult == GetResult::eOk)
+		if (requestResult == GetResult::eOk && optCustomer.has_value())
 		{
-			if (optCustomer.has_value())
-			{
-				const auto& customer = optCustomer.value();
-				result.second = formatOneCustomer(customer.get());
-			}
+			const auto& customer = optCustomer.value();
+			result.second = formatOneCustomer(customer.get());
 		}
 		else
-			result.second = "(no customer)";
+			result.second = std::string("(no customer)");
 
 		return result;
 
 	}
 
-	std::pair<GetResult, std::vector<std::string>> Formatter::getAllCustomers(const CustomerRepositoryManager& customerRepositoryManager) const
+	std::pair<GetResult, std::vector<std::string>> Formatter::getAllCustomers() const
 	{
 		std::pair<GetResult, std::vector<std::string>> result;
 
-		auto [requestResult, customers] = customerRepositoryManager.getAllCustomers();
+		auto [requestResult, customers] = _CustomerRepositoryManager.get().getAllCustomers();
 		result.first = requestResult;
 
 		if (requestResult == GetResult::eOk && customers.has_value())
