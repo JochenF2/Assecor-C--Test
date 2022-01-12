@@ -4,7 +4,7 @@
 namespace MyAssecorLibrary
 {
 	Formatter::Formatter(std::reference_wrapper<const CustomerRepositoryManager>&& customerRepositoryManager)
-		:_CustomerRepositoryManager(customerRepositoryManager)
+		:_CustomerRepositoryManager(std::move(customerRepositoryManager))
 	{
 	}
 
