@@ -13,15 +13,15 @@ namespace MyAssecorLibrary
         CustomerRepositoryInMemory(CustomerRepositoryInMemory&& rhs) = delete;
         ~CustomerRepositoryInMemory() override = default;
 
-        virtual AddResult addCustomer(const CUSTOMER& aCustomer) override;
-        virtual std::pair<GetResult, std::optional<std::reference_wrapper<CUSTOMER>>> getCustomerByID(const IDTYPE& id) override;
-        virtual  std::pair<GetResult, std::reference_wrapper<std::vector<CUSTOMER>>> getAllCustomers() override;
+        AddResult addCustomer(const CUSTOMER& aCustomer) override;
+        std::pair<GetResult, std::optional<std::reference_wrapper<CUSTOMER>>> getCustomerByID(const IDTYPE& id) override;
+        std::pair<GetResult, std::reference_wrapper<std::vector<CUSTOMER>>> getAllCustomers() override;
 
     private:
         std::vector<CUSTOMER>::const_iterator findIteratorOfCustomerWithID(const IDTYPE& id) const;
 
     private:
         // or usage of std::map<IDTYPE, CUSTOMER>
-        std::vector<CUSTOMER>       _Customers2;
+        std::vector<CUSTOMER>       _Customers;
     };
 }

@@ -88,31 +88,65 @@ TEST(GetAllCustomerTestWithFormatter, TestLibrary) {
 	EXPECT_EQ(customers[2], std::string("Mahn, Peter, 01119, Dresden, favorite color: 2"));
 }
 
-////////////////////////////////////
-// Mock Tests doesn't work yet...
+TEST(MockTest_GetCustomerByID_OK, TestLibrary) 
+{
+	MyAssecorLibrary::CustomerRepositoryManager customerRepositoryManager;
 
-//TEST(MockTest_GetAll, TestLibrary) 
-//{
-//	MyAssecorLibrary::CustomerRepositoryManager customerRepositoryManager;
-//
-//	customerRepositoryManager.setCustomerRepository(std::make_unique<MockCustomerRepository>());
-//	auto all = customerRepositoryManager.getAllCustomers();
-//}
+	customerRepositoryManager.setCustomerRepository(std::make_unique<MockCustomerRepository>());
 
-//TEST(MockTest_Get, TestLibrary)
-//{
-//	MyAssecorLibrary::CustomerRepositoryManager customerRepositoryManager;
-//
-//	customerRepositoryManager.setCustomerRepository(std::make_unique<MockCustomerRepository>());
-//	auto currentCustomerRepo = dynamic_cast<MockCustomerRepository*>(customerRepositoryManager.getCurrentCustomerRepository());
-//
-//	EXPECT_CALL(*currentCustomerRepo, addCustomer).WillOnce(testing::Return(MyAssecorLibrary::RepositoryAddResult::eOk));
-//
-//	customerRepositoryManager.addCustomer(CUSTOMER{ .id = 0, .first_name = "Olaf", .last_name = "Müller", .zip_code = "12209", .city = "Berlin", .favorite_color = 10 });
-//
-//	MyAssecorLibrary::Formatter aFormatter;
-//	auto [getResult, str] = aFormatter.getCustomerByID(customerRepositoryManager, 0);
-//
-//	EXPECT_EQ(str, "Müller, Olaf, 12209, Berlin, favorite color: 10");
-//
-//}
+	CUSTOMER aCustomer({ .id = 0, .first_name = "Olaf", .last_name = "Müller", .zip_code = "12209", .city = "Berlin", .favorite_color = 10 });
+	customerRepositoryManager.addCustomer(aCustomer);
+	
+	auto currentCustomerRepo = dynamic_cast<MockCustomerRepository*>(customerRepositoryManager.getCurrentCustomerRepository());
+	std::optional<std::reference_wrapper<CUSTOMER>> expectedCustomer(aCustomer);
+
+	auto retValue = std::pair(MyAssecorLibrary::GetResult::eOk, expectedCustomer);
+	auto myAction = testing::Return(retValue);
+	EXPECT_CALL(*currentCustomerRepo, getCustomerByID).WillOnce(myAction);
+	
+	customerRepositoryManager.getCustomerByID(0);
+}
+
+TEST(MockTest_GetCustomerByID_Fail, TestLibrary)
+{
+	MyAssecorLibrary::CustomerRepositoryManager customerRepositoryManager;
+
+	customerRepositoryManager.setCustomerRepository(std::make_unique<MockCustomerRepository>());
+
+	CUSTOMER aCustomer({ .id = 0, .first_name = "Olaf", .last_name = "Müller", .zip_code = "12209", .city = "Berlin", .favorite_color = 10 });
+	customerRepositoryManager.addCustomer(aCustomer);
+
+	auto currentCustomerRepo = dynamic_cast<MockCustomerRepository*>(customerRepositoryManager.getCurrentCustomerRepository());
+	std::optional<std::reference_wrapper<CUSTOMER>> expectedCustomer(aCustomer);
+
+	auto retValue = std::pair(MyAssecorLibrary::GetResult::eIDNotFound, std::nullopt);
+	auto myAction = testing::Return(retValue);
+	EXPECT_CALL(*currentCustomerRepo, getCustomerByID).WillOnce(myAction);
+
+	customerRepositoryManager.getCustomerByID(1);
+}
+
+TEST(MockTest_GetAllCustomer, TestLibrary)
+{
+	MyAssecorLibrary::CustomerRepositoryManager customerRepositoryManager;
+
+	customerRepositoryManager.setCustomerRepository(std::make_unique<MockCustomerRepository>());
+
+	std::vector<CUSTOMER> theCustomers({ 
+		{.id = 0, .first_name = "Olaf", .last_name = "Müller", .zip_code = "12209", .city = "Berlin", .favorite_color = 10 },
+		{.id = 1, .first_name = "Hannes", .last_name = "Bla", .zip_code = "12209", .city = "Berlin", .favorite_color = 11 },
+		{.id = 2, .first_name = "Test", .last_name = "Rainer", .zip_code = "12209", .city = "Berlin", .favorite_color = 10 } });
+
+	customerRepositoryManager.addCustomer(theCustomers[0]);
+	customerRepositoryManager.addCustomer(theCustomers[1]);
+	customerRepositoryManager.addCustomer(theCustomers[2]);
+
+	auto currentCustomerRepo = dynamic_cast<MockCustomerRepository*>(customerRepositoryManager.getCurrentCustomerRepository());
+	std::reference_wrapper<std::vector<CUSTOMER>> result1(theCustomers);
+
+	auto retValue = std::pair(MyAssecorLibrary::GetResult::eOk, result1);
+	auto myAction = testing::Return(retValue);
+	EXPECT_CALL(*currentCustomerRepo, getAllCustomers).WillOnce(myAction);
+
+	customerRepositoryManager.getAllCustomers();
+}

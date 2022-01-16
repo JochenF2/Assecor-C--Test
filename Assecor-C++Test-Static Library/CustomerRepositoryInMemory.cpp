@@ -7,9 +7,9 @@ namespace MyAssecorLibrary
     AddResult CustomerRepositoryInMemory::addCustomer(const CUSTOMER& aCustomer)
     {
         auto iter = findIteratorOfCustomerWithID(aCustomer.id);
-        if (iter == _Customers2.end())
+        if (iter == _Customers.end())
         {
-            _Customers2.push_back(aCustomer);
+            _Customers.push_back(aCustomer);
             return AddResult::eOk;
         }
         else
@@ -19,8 +19,8 @@ namespace MyAssecorLibrary
     std::pair<GetResult, std::optional<std::reference_wrapper<CUSTOMER>>> CustomerRepositoryInMemory::getCustomerByID(const IDTYPE& id)
     {
         auto iterConst = findIteratorOfCustomerWithID(id);
-        auto iter = _Customers2.erase(iterConst, iterConst);
-        if (iter != _Customers2.end())
+        auto iter = _Customers.erase(iterConst, iterConst);
+        if (iter != _Customers.end())
             return std::make_pair(GetResult::eOk, std::optional(std::ref(*iter) ));
         else
             return std::make_pair(GetResult::eIDNotFound, std::nullopt);
@@ -28,12 +28,12 @@ namespace MyAssecorLibrary
 
     std::pair<GetResult, std::reference_wrapper<std::vector<CUSTOMER>>> CustomerRepositoryInMemory::getAllCustomers()
     {
-        return std::make_pair<GetResult, std::reference_wrapper<std::vector<CUSTOMER>>>(GetResult::eOk, std::ref(_Customers2));
+        return std::make_pair<GetResult, std::reference_wrapper<std::vector<CUSTOMER>>>(GetResult::eOk, std::ref(_Customers));
     }
 
     std::vector<CUSTOMER>::const_iterator CustomerRepositoryInMemory::findIteratorOfCustomerWithID(const IDTYPE& id) const
     {
-        auto iterFound = std::ranges::find_if(_Customers2.begin(), _Customers2.end(), [&id](const CUSTOMER& aCustomerTemp) {
+        auto iterFound = std::ranges::find_if(_Customers.begin(), _Customers.end(), [&id](const CUSTOMER& aCustomerTemp) {
             return id == aCustomerTemp.id;
             });
 
