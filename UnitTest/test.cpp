@@ -150,3 +150,47 @@ TEST(MockTest_GetAllCustomer, TestLibrary)
 
 	customerRepositoryManager.getAllCustomers();
 }
+
+TEST(MockTest_AddCustomer_OK, TestLibrary)
+{
+	MyAssecorLibrary::CustomerRepositoryManager customerRepositoryManager;
+
+	customerRepositoryManager.setCustomerRepository(std::make_unique<MockCustomerRepository>());
+
+	std::vector<CUSTOMER> theCustomers({
+		{.id = 0, .first_name = "Olaf", .last_name = "Müller", .zip_code = "12209", .city = "Berlin", .favorite_color = 10 },
+		{.id = 1, .first_name = "Hannes", .last_name = "Bla", .zip_code = "12209", .city = "Berlin", .favorite_color = 11 },
+		{.id = 2, .first_name = "Test", .last_name = "Rainer", .zip_code = "12209", .city = "Berlin", .favorite_color = 10 } });
+
+	customerRepositoryManager.addCustomer(theCustomers[0]);
+	customerRepositoryManager.addCustomer(theCustomers[1]);
+	customerRepositoryManager.addCustomer(theCustomers[2]);
+
+	auto currentCustomerRepo = dynamic_cast<MockCustomerRepository*>(customerRepositoryManager.getCurrentCustomerRepository());
+
+	EXPECT_CALL(*currentCustomerRepo, addCustomer).WillOnce(testing::Return(MyAssecorLibrary::AddResult::eOk));
+
+	customerRepositoryManager.addCustomer({ .id = 5, .first_name = "Jane", .last_name = "Doe", .zip_code = "12209", .city = "Berlin", .favorite_color = 99 });
+}
+
+TEST(MockTest_AddCustomer_Fail, TestLibrary)
+{
+	MyAssecorLibrary::CustomerRepositoryManager customerRepositoryManager;
+
+	customerRepositoryManager.setCustomerRepository(std::make_unique<MockCustomerRepository>());
+
+	std::vector<CUSTOMER> theCustomers({
+		{.id = 0, .first_name = "Olaf", .last_name = "Müller", .zip_code = "12209", .city = "Berlin", .favorite_color = 10 },
+		{.id = 1, .first_name = "Hannes", .last_name = "Bla", .zip_code = "12209", .city = "Berlin", .favorite_color = 11 },
+		{.id = 2, .first_name = "Test", .last_name = "Rainer", .zip_code = "12209", .city = "Berlin", .favorite_color = 10 } });
+
+	customerRepositoryManager.addCustomer(theCustomers[0]);
+	customerRepositoryManager.addCustomer(theCustomers[1]);
+	customerRepositoryManager.addCustomer(theCustomers[2]);
+
+	auto currentCustomerRepo = dynamic_cast<MockCustomerRepository*>(customerRepositoryManager.getCurrentCustomerRepository());
+
+	EXPECT_CALL(*currentCustomerRepo, addCustomer).WillOnce(testing::Return(MyAssecorLibrary::AddResult::eDuplicatedID));
+
+	customerRepositoryManager.addCustomer({ .id = 2, .first_name = "Jane", .last_name = "Doe", .zip_code = "12209", .city = "Berlin", .favorite_color = 99 });
+}

@@ -3,7 +3,6 @@
 
 namespace MyAssecorLibrary
 {
-
 	CreateRepositoryResult CustomerRepositoryManager::createCustomerRepositoryInMemory()
 	{
 		_CustomerRepository.reset(new CustomerRepositoryInMemory);
