@@ -56,6 +56,5 @@ namespace MyAssecorLibrary
 	{
 		_CustomerRepository = std::move(customerRepository);
 	}
-
 }
 

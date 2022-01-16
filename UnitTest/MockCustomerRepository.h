@@ -11,10 +11,6 @@ class MockCustomerRepository : public MyAssecorLibrary::CustomerRepositoryInMemo
 public:
 	using GetCustomerByIDResult = std::pair<MyAssecorLibrary::GetResult, std::optional<std::reference_wrapper<CUSTOMER>>>;
 	using GetAllResult =  std::pair<MyAssecorLibrary::GetResult, std::reference_wrapper<std::vector<CUSTOMER>>>;
-public:
-	MockCustomerRepository() = default;
-	MockCustomerRepository(const MockCustomerRepository& rhs) = default;
-	MockCustomerRepository(MockCustomerRepository&& rhs) = default;
 
 	MOCK_METHOD(MyAssecorLibrary::AddResult, addCustomer, (const CUSTOMER& customer), (override));
 	MOCK_METHOD(GetCustomerByIDResult, getCustomerByID, (const MyAssecorLibrary::IDTYPE& id), (override));
