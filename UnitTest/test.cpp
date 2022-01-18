@@ -88,13 +88,17 @@ TEST(GetAllCustomerTestWithFormatter, TestLibrary) {
 	EXPECT_EQ(customers[2], std::string("Mahn, Peter, 01119, Dresden, favorite color: 2"));
 }
 
+// MockTest doesn't work
 TEST(MockTest_AddCustomer_OK, TestLibrary)
 {
 	MockCustomerRepository myMockCustomerRepo2;
 	ON_CALL(myMockCustomerRepo2, addCustomer).WillByDefault(testing::Return(MyAssecorLibrary::AddResult::eOk));
 
 	CUSTOMER aCustomer({ .id = 5, .first_name = "Jane", .last_name = "Doe", .zip_code = "12209", .city = "Berlin", .favorite_color = 99 });
+	
+	// Simple Test!! Mocked Member Function doesn't get invoked!! Don't know why... :-/
 	myMockCustomerRepo2.addCustomer(aCustomer);
+
 
 	//MyAssecorLibrary::CustomerRepositoryManager customerRepositoryManager;
 	//customerRepositoryManager.setCustomerRepository(std::make_unique<MockCustomerRepository>());
